@@ -8,27 +8,18 @@ class SessionComponent extends Component {
         super(props);
         this.state = {
             response: "",
-            domain: "",
-            authenticationToken: "",
-            appTrayId: ""
+            clientName : "",
+            tenantName : "",
+            apptray_role_id : "",
+            transId : ""
         }
+
     }
     useQuery() {
         return new URLSearchParams(window.location.search);
     }
 
-    // parseUrlParameter() {
-    //     let query = this.useQuery();
-    //     const domain = query.get("domain");
-    //     const authToken = query.get("authToken");
-    //     const apTrayId = query.get("appTrayId")
-    //     this.setState({ domain: domain, authenticationToken: authToken, appTrayId: apTrayId })
-    //     console.log("auth token :" + this.state.authenticationToken)
-    //     console.log("Domain :" + this.state.domain)
-    //     console.log("App Tray Id :" + this.state.appTrayId)
-    // }
-
-    componentDidMount() {
+    componentWillMount() {
         //http://localhost:3000/session?accesstoken=05d60e6a-4910-48ac-ab51-49b919ebdb6f&domain=qa-newtheme.imiconnect.com&apptrayId=1
         let query = this.useQuery();
         const domain = query.get("domain");
@@ -36,12 +27,11 @@ class SessionComponent extends Component {
         const apTrayId = query.get("apptrayId")
         axios.get(`https://${domain}/connectapi/v1/verifyaccesstoken?accessToken=${authToken}&apptray_Id=${apTrayId}`)
             .then(res => {
-                this.setState({ response: JSON.stringify(res.data) })
+                const data = res.data;
+                this.setState({ response: JSON.stringify(data), clientName:data.client_name,tenantName : data.tenant_name,apptray_role_id : data.apptray_role_id, transId :data.transid  })
             })
-            .then(err => {
-                this.setState ({response : JSON.stringify(err)})
-            })
-    }
+           
+         }
 
 
     render() {
@@ -50,7 +40,11 @@ class SessionComponent extends Component {
         return (
             <div>
                 <h1>Session Component</h1>
-                <h2>{this.state.response}</h2>
+                {/* <h2>{this.state.response}</h2> */}
+                <h2>client Name : {this.state.clientName}</h2>
+                <h2>Tenant Name : {this.state.tenantName}</h2>
+                <h2>AppTray Role Id : {this.state.apptray_role_id}</h2>
+                <h2>Trans Id : {this.state.transId} </h2>
             </div>
         )
     }
