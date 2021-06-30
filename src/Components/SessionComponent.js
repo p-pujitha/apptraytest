@@ -8,10 +8,10 @@ class SessionComponent extends Component {
         super(props);
         this.state = {
             response: "",
-            clientName : "",
+            tenantId : "",
             tenantName : "",
             apptray_role_id : "",
-            transId : ""
+            apptray_modules : []
         }
 
     }
@@ -25,10 +25,11 @@ class SessionComponent extends Component {
         const domain = query.get("domain");
         const authToken = query.get("accesstoken");
         const apTrayId = query.get("apptrayId")
-        axios.get(`https://${domain}/connectapi/v1/verifyaccesstoken?accessToken=${authToken}&apptray_Id=${apTrayId}`)
+        const jwtToken = query.get("jwttoken")
+        axios.get(`https://${domain}/connectapi/v1/verifyaccesstoken?accessToken=${authToken}&apptray_Id=${apTrayId}&jwttoken=${jwtToken}`)
             .then(res => {
                 const data = res.data;
-                this.setState({ response: JSON.stringify(data), clientName:data.client_name,tenantName : data.tenant_name,apptray_role_id : data.apptray_role_id, transId :data.transid  })
+                this.setState({ response: JSON.stringify(data), tenantId:data.tenant_id,tenantName : data.tenant_name,apptray_role_id : data.apptray_role_id, apptray_modules :data.apptray_module_id  })
             })
            
          }
@@ -41,10 +42,10 @@ class SessionComponent extends Component {
             <div>
                 <h1>Session Component</h1>
                 {/* <h2>{this.state.response}</h2> */}
-                <h2>client Name : {this.state.clientName}</h2>
-                <h2>Tenant Name : {this.state.tenantName}</h2>
-                <h2>AppTray Role Id : {this.state.apptray_role_id}</h2>
-                <h2>Trans Id : {this.state.transId} </h2>
+                {this.state.tenantId  ? <h2>Tenant Id : {this.state.tenantId}</h2> : ""}
+                {this.state.tenantName ? <h2>Tenant Name : {this.state.tenantName}</h2> : ""}
+                {this.state.apptray_role_id ? <h2>AppTray Role Id : {this.state.apptray_role_id} </h2> :""}
+                {this.state.apptray_modules ? <h2>AppTray Modules : {this.state.apptray_modules} </h2>: "" }
             </div>
         )
     }
